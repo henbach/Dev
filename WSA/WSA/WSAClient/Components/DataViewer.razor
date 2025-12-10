@@ -1,0 +1,84 @@
+﻿@using System.Reflection
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                @foreach (var column in Columns)
+                {
+                    <th>@column.Name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Data)
+            {
+                <tr>
+                    @foreach (var column in Columns)
+                    {
+                        <td>
+                            @if (row.ContainsKey(column.Name) && row[column.Name] != DBNull.Value)
+                            {
+                                @row[column.Name]?.ToString()
+                            }
+                            else
+                            {
+                                <span class="text-muted">NULL</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (TotalRecords > PageSize)
+{
+    <nav aria-label="Data navigation">
+        <ul class="pagination justify-content-center">
+            @{
+                var totalPages = (int)Math.Ceiling((double)TotalRecords / PageSize);
+                var startPage = Math.Max(1, CurrentPage - 2);
+                var endPage = Math.Min(totalPages, CurrentPage + 2);
+            }
+
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChanged.InvokeAsync(1)"
+                        aria-label="First">
+                    &laquo;
+                </button>
+            </li>
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == CurrentPage ? "active" : "")">
+                    <button class="page-link" @onclick="() => OnPageChanged.InvokeAsync(i)">
+                        @i
+                    </button>
+                </li>
+            }
+
+            <li class="page-item @(CurrentPage == totalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => OnPageChanged.InvokeAsync(totalPages)"
+                        aria-label="Last">
+                    &raquo;
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="text-center text-muted">
+        Showing @((CurrentPage - 1) * PageSize + 1) to
+        @Math.Min(CurrentPage * PageSize, TotalRecords) of @TotalRecords records
+    </div>
+}
+
+@code {
+    [Parameter] public List<Dictionary<string, object>> Data { get; set; } = new();
+    [Parameter] public List<ColumnInfo> Columns { get; set; } = new();
+    [Parameter] public int TotalRecords { get; set; }
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+}
