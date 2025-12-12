@@ -8,7 +8,7 @@ public static class ApiServices
 {
     public static IServiceCollection AddApiServices(
         this IServiceCollection services,
-        ApiSettings configuration,
+        AppSettings configuration,
         bool isDevelopment)
     {       
         string dbHost = isDevelopment ? configuration.DatabaseHost : configuration.ProductionDatabaseHost;

@@ -1,0 +1,109 @@
+﻿<div class="@rgvCssClass" @onclick="() => DeviceHasBeenClicked.InvokeAsync(Id)">
+
+    @if (!string.IsNullOrEmpty(Hu))
+    {
+        <div class="device-hu">
+            @DeviceLabel
+        </div>
+    }
+    else
+    {
+        @DeviceLabel
+    }
+
+</div>
+
+@code {
+
+    [Parameter]
+    public string ZoneId { get; set; } = string.Empty;
+
+    [Parameter]
+    public Dictionary<string, string> Rgv { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<string> DeviceHasBeenClicked { get; set; }
+
+    [Parameter]
+    public List<string> MarkedDevices { get; set; } = new();
+
+    string Id => Rgv.GetValueAsString("Id");
+    int? OpModus => Rgv.GetValueAsInt("OpModus");
+    string Hu => Rgv.GetValueAsString("Hu");
+    bool IsDeviceMarked => MarkedDevices.Any(x => x == Id);
+    string DeviceLabel => ZoneId.StartsWith("Z") ? Id : Id;
+
+    string rgvCssClass
+    {
+        get
+        {
+            string cssClass = "device-shape {0} {1}";
+            string variable = "device-neutral";
+            switch (OpModus)
+            {
+                case 0:
+                    variable = "device-ok";
+                    break;
+                case 3:
+                    variable = "device-nok";
+                    break;
+            }
+
+            string selectedDeviceClass = string.Empty;
+            if (IsDeviceMarked)
+            {
+                selectedDeviceClass = "device-selected";
+            }
+
+            cssClass = string.Format(cssClass, variable, selectedDeviceClass);
+
+            return cssClass;
+        }
+    }
+
+}
+<style>
+
+    .device-shape {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background-color: #007bff;
+        font-size:16px;
+        width: 45px;
+        padding: 5px;
+    }
+
+    .device-ok {
+        background-color: limegreen;
+        color: #000000;
+    }
+
+    .device-nok {
+        background-color: crimson;
+        color: white;
+    }
+
+    .device-neutral {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .device-selected {
+        border-style: solid;
+        border-width: 3px;
+        border-color: #ff00ff;
+    }
+
+    .device-hu {
+        margin: 1px;
+        background-color: orange;
+        border-radius: 10px;
+    }
+
+    .zone-grid-item:hover {
+        transform: scale(1.7);
+    }
+</style>

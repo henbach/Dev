@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PmsViz.Core.Dtos
 {
-    public class ApiSettings
+    public class AppSettings
     {
         public string WebServicePorts { get; set; }
         public int HttpPort { get { return int.Parse(WebServicePorts.Split(',')[0]); } }

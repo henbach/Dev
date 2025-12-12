@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 bool isDevelopment = builder.Environment.IsDevelopment();
 
-ApiSettings apiSettings = new ApiSettings();
+AppSettings apiSettings = new AppSettings();
 builder.Configuration.GetSection("ApiSettings").Bind(apiSettings);
 
 // Add services to the container.

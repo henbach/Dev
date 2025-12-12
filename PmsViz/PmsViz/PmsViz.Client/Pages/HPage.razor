@@ -1,0 +1,94 @@
+﻿@page "/"
+
+@inject ILayoutRepository layoutRepository;
+@inject IDataService dataService;
+
+<AutoRefreshBar RefreshNow="LoadDataAsync" Title="@($"Layout")" />
+
+<div class="top-container">
+    <div class="main-container">
+        <HLevel3 ZoneInGridHelper="@ZoneInGridHelper"
+        Data="@_data"
+        DeviceHasBeenClicked="@DeviceHasBeenClicked_Handler" 
+        MarkedDevices="@markedDevices"/>                
+    </div>
+    @if (markedDevices.Count > 0)
+    {
+        <div class="sidebar">
+            <HLevel3b 
+            ZoneInGridHelper="@ZoneInGridHelper"
+            Data="@_data"
+            MarkedDevices="@markedDevices" />
+        </div>
+    }
+</div>
+
+@code {
+
+    private List<Dictionary<string, object>> _data = new();
+    private List<string> markedDevices = new();
+    private AreaZoneInGridHelper ZoneInGridHelper = new();
+    private PmsLayoutDefinition LoopDefinition => layoutRepository.GetAllLayouts().FirstOrDefault();
+
+
+    void DeviceHasBeenClicked_Handler(string deviceId)
+    {
+        var foundDevice = markedDevices.FirstOrDefault(x => x == deviceId);
+        if (foundDevice == null)
+        {
+            markedDevices.Add(deviceId);
+        }
+        else
+        {
+            markedDevices.Remove(foundDevice);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
+        markedDevices = new();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {        
+        //ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
+        //markedDevices = new();
+        await LoadDataAsync();       
+    }
+
+
+    private async Task LoadDataAsync()
+    {
+        _data = dataService.GetDictMfsPosTuData().ToList();
+    }
+
+    private AreaZoneInGrid GetAreaZoneInGrid(string id)
+    {
+        return ZoneInGridHelper.AreaZones.Where(x => x.id == id).FirstOrDefault();
+    }
+
+
+
+}
+
+<style>
+    .top-container {
+        display: flex;
+        flex-direction: row;
+        height: 100vh; /* full height */
+    }
+
+    .main-container {
+        flex: 3; /* takes more space */
+        padding: 1rem;
+        border-right: 1px solid #ccc;
+    }
+
+    .sidebar {
+        flex: 1; /* smaller column */
+        padding: 1rem;
+        background-color: #f9f9f9;
+    }
+    
+</style>

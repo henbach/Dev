@@ -1,0 +1,111 @@
+﻿<div class="loop-grid-container" style="@ZoneInGridHelper.MainGridStyle">
+    @foreach (var areaZone in ZoneInGridHelper.AreaZones)
+    {
+            string zoneClass = areaZone.GetCssClass();
+            string zoneStyle = areaZone.GetStyle();                                                            
+            areaZone.RgvData = ZoneInGridHelper.GetDevicesInZone(Data, areaZone.id);
+            areaZone.Direction = ZoneInGridHelper.GetLayoutDirectionForZone(areaZone.id);
+            
+            <div class="@zoneClass" style="@zoneStyle">
+            <HLevel2 TsZone="@areaZone"
+                     DeviceHasBeenClicked="@DeviceHasBeenClicked" 
+                    MarkedDevices="@MarkedDevices" />
+            </div>                            
+    }  
+</div>
+
+@code {
+
+    [Parameter]
+    public AreaZoneInGridHelper ZoneInGridHelper { get; set; }
+    [Parameter]
+    public List<string> MarkedDevices { get; set; } = new();
+    [Parameter]
+    public EventCallback<string> DeviceHasBeenClicked { get; set; }
+    [Parameter]
+    public List<Dictionary<string, object>> Data { get; set; } = new();
+
+   
+
+}
+
+<style>
+
+    .loop-grid-container {
+        display: grid;
+        box-sizing: border-box;
+        gap: 1px; /* Optional spacing between grid items */
+        padding: 10px;
+        background-color: #f0f0f0;
+    }
+
+
+    .loop-grid-item {
+        background-color: #333333;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: clip;
+    }
+
+    .loop-grid-direction-item {
+        background-color: dodgerblue;
+        color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: clip;
+        opacity: 0.5;
+    }
+
+    .loop-grid-empty-item {
+        background-color: #f0f0f0;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+   
+    .right-arrow-inline {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 4px; /* spacing from text */
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-left: 5px solid white; /* right arrow */
+    }
+
+    .left-arrow-inline {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 4px; /* spacing from text */
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-right: 5px solid white; /* right arrow */
+    }
+
+    .up-arrow-inline {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 4px; /* spacing from text */    
+        border-bottom: 5px solid white;
+        border-right: 7px solid transparent; /* right arrow */
+        border-left: 7px solid transparent; /* right arrow */
+    }
+
+    .down-arrow-inline {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 4px; /* spacing from text */
+        border-top: 5px solid white;
+        border-right: 7px solid transparent; /* right arrow */
+        border-left: 7px solid transparent; /* right arrow */
+    }
+</style>
+

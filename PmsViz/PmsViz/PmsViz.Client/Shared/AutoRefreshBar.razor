@@ -1,0 +1,80 @@
+﻿@implements IDisposable
+
+<div class="horizontal-space-between-container">
+
+    <div class="grid-box">
+        <input type="checkbox" @bind="AutoUpdateActive">
+        Auto Refresh
+        @if (!AutoUpdateActive)
+        {
+            <button class="header" @onclick="ButtonPressed">Refresh</button>
+        }
+    </div>
+
+    <span>@Title</span>
+
+    <span>@LastUpdateText</span>
+</div>
+
+@code {
+    private Timer? _timer;
+    private bool AutoUpdateActive = true;
+    private string LastUpdateText;
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public EventCallback RefreshNow { get; set; }
+
+    private void ButtonPressed()
+    {
+        SendRefreshNow();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _timer = new Timer(_ =>
+            InvokeAsync(async () =>
+            {
+                if (AutoUpdateActive)
+                {
+                    SendRefreshNow();
+                }
+            }),
+            null, 0, 5000);
+    }
+
+    private void SendRefreshNow()
+    {
+        LastUpdateText = DateTime.Now.ToString("HH:mm:ss");
+        StateHasChanged();
+        RefreshNow.InvokeAsync();
+    }
+
+    public void Dispose() => _timer?.Dispose();
+
+}
+
+<style>
+    .grid-box {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        max-height: 100px;
+    }
+
+    .horizontal-space-between-container {
+        display: flex; /* Enable Flexbox */
+        justify-content: space-between; /* Push items to the edges */
+        align-items: center; /* Vertically center items */
+        gap: 1rem; /* Space between text and button */
+        padding: 1rem; /* Optional: Add some padding */
+        border: 1px solid #ddd; /* Optional: Border for visualization */
+        max-height: 30px;
+        font-size: 12px;
+    }
+</style>

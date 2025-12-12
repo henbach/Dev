@@ -1,9 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PmsViz.Core\PmsViz.Core.csproj" />
+    <ProjectReference Include="..\PmsViz.Implementations\PmsViz.Implementations.csproj" />
+  </ItemGroup>
 
 </Project>
