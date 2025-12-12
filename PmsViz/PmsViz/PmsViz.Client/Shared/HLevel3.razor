@@ -1,16 +1,24 @@
 ﻿<div class="loop-grid-container" style="@ZoneInGridHelper.MainGridStyle">
     @foreach (var areaZone in ZoneInGridHelper.AreaZones)
     {
-            string zoneClass = areaZone.GetCssClass();
-            string zoneStyle = areaZone.GetStyle();                                                            
-            areaZone.RgvData = ZoneInGridHelper.GetDevicesInZone(Data, areaZone.id);
-            areaZone.Direction = ZoneInGridHelper.GetLayoutDirectionForZone(areaZone.id);
-            
-            <div class="@zoneClass" style="@zoneStyle">
-            <HLevel2 TsZone="@areaZone"
-                     DeviceHasBeenClicked="@DeviceHasBeenClicked" 
-                    MarkedDevices="@MarkedDevices" />
-            </div>                            
+        areaZone.ZonePositionMapping = ZoneInGridHelper.ZonePositionMapping;
+        areaZone.ZoneData = ZoneInGridHelper.GetDataForZone(Data, areaZone.Id);
+        areaZone.Direction = ZoneInGridHelper.GetLayoutDirectionForZone(areaZone.Id);
+
+        string zoneClass = areaZone.GetCssClassForPositionState();
+        string zoneStyle = areaZone.GetStyleForPosition();
+       
+
+        <div class="@zoneClass" style="@zoneStyle">
+            @if (areaZone.IsAreaToShowDirection)
+            {
+                @areaZone.ZoneDisplayName
+            }
+            else
+            {
+                <HLevel2 TsZone="@areaZone" DeviceHasBeenClicked="@DeviceHasBeenClicked" MarkedDevices="@MarkedDevices" />
+            }            
+        </div>                            
     }  
 </div>
 
@@ -67,45 +75,17 @@
         justify-content: center;
     }
 
-   
-    .right-arrow-inline {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        margin-left: 4px; /* spacing from text */
-        border-top: 7px solid transparent;
-        border-bottom: 7px solid transparent;
-        border-left: 5px solid white; /* right arrow */
+    .manual{
+        background-color: orange;
+        color: white;
     }
-
-    .left-arrow-inline {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        margin-left: 4px; /* spacing from text */
-        border-top: 7px solid transparent;
-        border-bottom: 7px solid transparent;
-        border-right: 5px solid white; /* right arrow */
+    .automatic{
+        background-color: green;
+        color: white;
     }
-
-    .up-arrow-inline {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        margin-left: 4px; /* spacing from text */    
-        border-bottom: 5px solid white;
-        border-right: 7px solid transparent; /* right arrow */
-        border-left: 7px solid transparent; /* right arrow */
-    }
-
-    .down-arrow-inline {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        margin-left: 4px; /* spacing from text */
-        border-top: 5px solid white;
-        border-right: 7px solid transparent; /* right arrow */
-        border-left: 7px solid transparent; /* right arrow */
+    .error{
+        background-color: red;
+        color: white;        
     }
 </style>
 

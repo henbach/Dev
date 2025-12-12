@@ -1,25 +1,14 @@
-﻿<div class="@rgvCssClass" @onclick="() => DeviceHasBeenClicked.InvokeAsync(Id)">
-
-    @if (!string.IsNullOrEmpty(Hu))
-    {
-        <div class="device-hu">
-            @DeviceLabel
-        </div>
-    }
-    else
-    {
-        @DeviceLabel
-    }
-
-</div>
-
+﻿@if (string.IsNullOrEmpty(Hu) == false)
+{
+    <div class="@rgvCssClass" @onclick="() => DeviceHasBeenClicked.InvokeAsync(Hu)">
+        @Hu
+    </div>
+}
 @code {
 
+   
     [Parameter]
-    public string ZoneId { get; set; } = string.Empty;
-
-    [Parameter]
-    public Dictionary<string, string> Rgv { get; set; } = new();
+    public Dictionary<string, object> Rgv { get; set; } = new();
 
     [Parameter]
     public EventCallback<string> DeviceHasBeenClicked { get; set; }
@@ -27,11 +16,10 @@
     [Parameter]
     public List<string> MarkedDevices { get; set; } = new();
 
-    string Id => Rgv.GetValueAsString("Id");
-    int? OpModus => Rgv.GetValueAsInt("OpModus");
+    int OpModus => 0;
     string Hu => Rgv.GetValueAsString("Hu");
-    bool IsDeviceMarked => MarkedDevices.Any(x => x == Id);
-    string DeviceLabel => ZoneId.StartsWith("Z") ? Id : Id;
+    bool IsDeviceMarked => MarkedDevices.Any(x => x == Hu);
+   
 
     string rgvCssClass
     {

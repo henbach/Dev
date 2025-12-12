@@ -11,7 +11,21 @@ namespace PmsViz.Core.Models
     {
         public List<List<string>> LoopData => loopData;
         public string MainGridStyle => loopGridStyle;
-        public List<AreaZoneInGrid> AreaZones => areaZones;
+        public List<AreaZoneInGrid> AreaZones
+        {
+            get
+            {
+                foreach(var areaZone in areaZones)
+                {
+                    areaZone.Direction = GetLayoutDirectionForZone(areaZone.Id);
+                    areaZone.ZonePositionMapping = LoopDefinition.ZonePositionMapping;
+                    areaZone.ZoneData = GetDataForZone(_rgvData, areaZone.Id);
+                }
+                return areaZones;
+            }
+        }
+
+            
         public Dictionary<string, string> ZoneDirections => LoopDefinition.Directions;
         public Dictionary<string, string> ZonePositionMapping => LoopDefinition.ZonePositionMapping;
 
@@ -21,6 +35,7 @@ namespace PmsViz.Core.Models
         private int maxColumns => loopData.Select(x => x.Count).Max();
         List<string> distinctZones = new List<string>();
         List<string> nonZones = new List<string>();
+        List<Dictionary<string, object>> _rgvData { get; set; } = new();
 
 
         string loopGridStyle;
@@ -37,6 +52,11 @@ namespace PmsViz.Core.Models
         {
             LoopDefinition = loopDefinition;
             Process();
+        }
+
+        public void SetData(List<Dictionary<string, object>> rgvData)
+        {
+            _rgvData = rgvData;
         }
 
         public void Process()
@@ -92,14 +112,14 @@ namespace PmsViz.Core.Models
             foreach (var zone in distinctZones)
             {
                 var zoneSize = new AreaZoneInGrid();
-                zoneSize.id = zone;
+                zoneSize.Id = zone;
 
                 for (int y = 0; y < loopData.Count; y++)
                 {
                     var row = loopData[y];
                     for (int x = 0; x < row.Count; x++)
                     {
-                        if (row[x] == zoneSize.id)
+                        if (row[x] == zoneSize.Id)
                         {
                             zoneSize.positions.Add(new(x, y));
                         }
@@ -116,7 +136,7 @@ namespace PmsViz.Core.Models
                     if (nonZonesDefinition.Contains(row[x]))
                     {
                         var zoneSize = new AreaZoneInGrid();
-                        zoneSize.id = row[x];
+                        zoneSize.Id = row[x];
                         zoneSize.positions.Add(new(x, y));
                         areaZones.Add(zoneSize);
                     }
@@ -158,7 +178,7 @@ namespace PmsViz.Core.Models
             return new FlcLoopHuDevice(data);
         }
 
-        public List<Dictionary<string, string>> GetDevicesInZone(
+        public List<Dictionary<string, object>> GetDataForZone(
             List<Dictionary<string, object>> _data,
             string zoneId)
         {
@@ -166,45 +186,23 @@ namespace PmsViz.Core.Models
                 return new();
 
             string zone = zoneId;
-            if (zone.StartsWith("T"))
+
+            if(zone =="A0")
             {
-                var zonePosMappings = LoopDefinition.ZonePositionMapping;
-                if (zonePosMappings.TryGetValue(zone, out _))
-                {
-                    zone = zonePosMappings[zone];
-                }
+                string g = "";
             }
+                        
+            var zonePosMappings = LoopDefinition.ZonePositionMapping;
+            if (zonePosMappings.TryGetValue(zone, out _))
+            {
+                zone = zonePosMappings[zone];
+            }            
 
             var dataZone = _data
                 .Where(x => x.GetValueAsString("mpos_ident") == zone              
             );
 
-            string direction = GetLayoutDirectionForZone(zone);
-
-            if ("W;N".Contains(direction))
-            {
-                dataZone = dataZone.OrderBy(x => x.GetValueAsInt("fdzp_pos_in_zone"));
-            }
-            else
-            {
-                dataZone = dataZone.OrderByDescending(x => x.GetValueAsInt("fdzp_pos_in_zone"));
-            }
-
-            List<Dictionary<string, string>> rgvs = new();
-            foreach (var item in dataZone)
-            {
-                rgvs.Add(new Dictionary<string, string>()
-            {
-                { "Id", item.GetValueAsString("fdzp_device")},
-                { "OpModus", item.GetValueAsString("fdev_op_mode_sub")},
-                { "Hu",  item.GetValueAsString("ftra_hu")},
-                { "SourceLoc",  item.GetValueAsString("FTRA_SOURCE_LOC")},
-                { "DesctLoc",  item.GetValueAsString("FTRA_DEST_LOC")},
-
-            });
-            }
-
-            return rgvs;
+            return dataZone.ToList();            
         }
     }
 }

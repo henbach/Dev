@@ -1,24 +1,17 @@
-﻿@if(TsZone.isDirectional)
-{        
-    @TsZone.ZoneDisplayName
-}
-else
-{
-    <div class="zone-grid-container">    
-        <div class="zone-title">
-            @TsZone.ZoneDisplayName
-        </div>
-        <div class="zone-children-container" style="@styleRgvDirection">
-            @foreach (var rgv in TsZone.RgvData)
-            {
-                <HLevel1 ZoneId="@TsZone.id"
-                         Rgv="@rgv"
-                         DeviceHasBeenClicked="DeviceHasBeenClicked"
-                         MarkedDevices="@MarkedDevices" />
-            }
-        </div>        
+﻿<div class="zone-grid-container">    
+    <div class="zone-title">
+        @TsZone.ZoneDisplayName
     </div>
-}
+    <div class="zone-children-container" style="@styleRgvDirection">
+        @foreach (var rgv in TsZone.ElementsInsideZoneData)
+        {
+            <HLevel1 Rgv="@rgv"
+                        DeviceHasBeenClicked="DeviceHasBeenClicked"
+                        MarkedDevices="@MarkedDevices" />
+        }
+    </div>        
+</div>
+
 
 @code {
 
@@ -35,7 +28,7 @@ else
     {
         get
         {
-            int numberOfRowsOrColumns = TsZone.RgvData == null ? 0 : TsZone.RgvData.Count;
+            int numberOfRowsOrColumns = TsZone.ZoneData == null ? 0 : TsZone.ZoneData.Count;
             if (TsZone.Direction.Contains("W") || TsZone.Direction.Contains("E"))
             {
                 return $"grid-template-columns: repeat({numberOfRowsOrColumns}, 1fr);";
@@ -45,11 +38,7 @@ else
                 return $"grid-template-rows: repeat({numberOfRowsOrColumns}, 1fr);";
             }
         }
-    }
-
-   
-
-    
+    } 
 
     void DeviceItemOnClicked(Dictionary<string, string> rgv)
     {

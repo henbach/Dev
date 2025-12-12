@@ -8,69 +8,113 @@ namespace PmsViz.Core.Dtos
 {
     public class AreaZoneInGrid
     {
-        public const string DIRECTIONAL_SYMBOLS = "ee;ww;nn;ss";
-        public const string NON_ZONE_SYMBOLS = "XX;--";
+        public const string DIRECTIONAL_SYMBOLS = "ee;ww;nn;ss;XX";
+        public const string NON_ZONE_SYMBOLS = "--";
 
-
-        public string id { get; set; }
+        public string Id { get; set; }
         public List<(int, int)> positions { get; set; } = new();
-        public Dictionary<string, string> ZoneMappings { get; set; } = new();
+        public Dictionary<string, string> ZonePositionMapping { get; set; } = new();
         public string Direction { get; set; }
-        public List<Dictionary<string, string>> RgvData { get; set; } = new();
+        public List<Dictionary<string, object>> ZoneData { get; set; } = new();
 
-        public bool isDirectional
+        public List<Dictionary<string, object>> ElementsInsideZoneData
+        {
+            get 
+            {
+                List<Dictionary<string, object>> rgvs = new();
+                foreach (var item in ZoneData)
+                {
+                    rgvs.Add(new Dictionary<string, object>()
+                        {
+                            { "Hu",  item.GetValueAsString("mtru_ident") },
+                       
+                        });
+                }
+                return rgvs;                
+            }
+        }
+
+        public bool IsAreaToShowDirection
         {
             get
             {
-                return DIRECTIONAL_SYMBOLS.Contains(id);
+                return DIRECTIONAL_SYMBOLS.Contains(Id);
             }
         }
         public string ZoneDisplayName
         {
             get
             {
-                if(NON_ZONE_SYMBOLS.Contains(id))
+                if(NON_ZONE_SYMBOLS.Contains(Id))
                 {
                     return string.Empty;
                 }
-                if(id == "ee")
+                if(Id == "ee")
                 {
                     return "→";
                 }
-                if (id == "ww")
+                if (Id == "ww")
                 {
                     return "←";
                 }
-                if (id == "nn")
+                if (Id == "nn")
                 {
                     return "↑";
                 }
-                if (id == "ss")
+                if (Id == "ss")
                 {
                     return "↓";
                 }
-                if (ZoneMappings != null && ZoneMappings.ContainsKey(id))
+                if (Id == "XX")
                 {
-                    return ZoneMappings[id];
+                    return "°";
                 }
-                return id;
+
+                if (ZonePositionMapping != null && ZonePositionMapping.ContainsKey(Id))
+                {
+                    return ZonePositionMapping[Id];
+                }
+                return Id;
             }
         }
 
-        public string GetCssClass()
+        public string GetCssClassForPositionState()
         {
-            if ("nn;ss;ee;ww".Contains(id))
+            if ("nn;ss;ee;ww;XX".Contains(Id))
             {
                 return "loop-grid-direction-item";
             }
-            else if ("--".Contains(id))
+            else if ("--".Contains(Id))
             {
                 return "loop-grid-empty-item";
             }
 
+            var zoneData = ZoneData.FirstOrDefault();
+            if (zoneData != null)
+            {
+                int? op_mode_plc = zoneData.GetValueAsInt("MPOS_OP_MODE_PLC");
+
+                if(op_mode_plc == null )
+                {
+                    return "loop-grid-item";
+                }
+                else if(op_mode_plc == 0) // Automatic
+                {
+                    return "loop-grid-item automatic";
+                }
+                else if (op_mode_plc == 1 || op_mode_plc == 2) // Manual
+                {
+                    return "loop-grid-item manual";
+                }
+                else if (op_mode_plc == 3) // Out of service
+                {
+                    return "loop-grid-item error";
+                }
+
+            }
             return "loop-grid-item";
         }
-        public string GetStyle()
+        public string GetStyleForPosition()
         {
             int minX = positions.Select(x => x.Item1).Min();
             int maxX = positions.Select(x => x.Item1).Max();
