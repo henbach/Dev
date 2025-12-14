@@ -1,14 +1,14 @@
 ﻿@if (string.IsNullOrEmpty(Hu) == false)
 {
     <div class="@rgvCssClass" @onclick="() => DeviceHasBeenClicked.InvokeAsync(Hu)">
-        @Hu
+        HU
     </div>
 }
 @code {
 
    
     [Parameter]
-    public Dictionary<string, object> Rgv { get; set; } = new();
+    public Dictionary<string, object> HusInPosition { get; set; } = new();
 
     [Parameter]
     public EventCallback<string> DeviceHasBeenClicked { get; set; }
@@ -17,10 +17,9 @@
     public List<string> MarkedDevices { get; set; } = new();
 
     int OpModus => 0;
-    string Hu => Rgv.GetValueAsString("Hu");
+    string Hu => HusInPosition.GetValueAsString("Hu");
     bool IsDeviceMarked => MarkedDevices.Any(x => x == Hu);
    
-
     string rgvCssClass
     {
         get
@@ -59,8 +58,9 @@
         justify-content: center;
         border-radius: 10px;
         background-color: #007bff;
-        font-size:16px;
-        width: 45px;
+        font-size:12px;
+        height:10px;
+        width: 25px;
         padding: 5px;
     }
 

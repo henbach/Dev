@@ -31,9 +31,23 @@ namespace PmsViz.Implementations
                 { "A0", "P21FIAI06-1POS1" },
                 { "A1", "P21MPIN06" },
                 { "A2", "P21MPPREZONE06" },
-                 { "A3", "P21MPPREZONE05" },
+                { "A3", "P21MPPREZONE05" },
                 { "A4", "P11MPOUT05" },
-                { "A5", "P11FOAI05-1" },
+                { "A5", "P11FOAI05-1POS1" },
+                { "B0", "P21FOAI06-1POS1" },
+                { "B1", "P21MPOUT06" },
+                { "B2", "P21MPLIFT01IN01" },
+                { "B3", "P11MPPREZONE04" },
+                { "B4", "P11MPIN05" },
+                { "B5", "P11FIAI05-1POS1" },
+                { "C0", "P21FIAI07-1POS1" },
+                { "C1", "P21MPIN07" },
+                { "C2", "P21MPPREZONE07" },
+                { "C3", "P21MPLIFT01OUT01" },
+                { "C4", "P11MPOUT04" },
+                { "C5", "P11FOAI04-1POS1" },
+
+
 
             };
 

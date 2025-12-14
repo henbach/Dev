@@ -45,15 +45,13 @@
     }
 
     protected override void OnParametersSet()
-    {
-        ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
+    {       
         markedDevices = new();
     }
 
     protected override async Task OnInitializedAsync()
     {        
-        //ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
-        //markedDevices = new();
+        ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
         await LoadDataAsync();       
     }
 
@@ -61,15 +59,7 @@
     private async Task LoadDataAsync()
     {
         _data = dataService.GetDictMfsPosTuData().ToList();
-    }
-
-    private AreaZoneInGrid GetAreaZoneInGrid(string id)
-    {
-        return ZoneInGridHelper.AreaZones.Where(x => x.Id == id).FirstOrDefault();
-    }
-
-
-
+    }  
 }
 
 <style>

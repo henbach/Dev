@@ -21,7 +21,7 @@ namespace PmsViz.Core.Dtos
         }
         public FlcLoopHuDevice(Dictionary<string, object> item)
         {
-            Id = item.GetValueAsString("fdzp_device");
+            Id = item.GetValueAsString("mtru_ident");
             OpModus = item.GetValueAsString("fdev_op_mode_sub");
             Hu = item.GetValueAsString("ftra_hu");
             SrcLoc = item.GetValueAsString("FTRA_SOURCE_LOC");

@@ -3,9 +3,9 @@
         @TsZone.ZoneDisplayName
     </div>
     <div class="zone-children-container" style="@styleRgvDirection">
-        @foreach (var rgv in TsZone.ElementsInsideZoneData)
+        @foreach (var hu in TsZone.ElementsInsideZoneData)
         {
-            <HLevel1 Rgv="@rgv"
+            <HLevel1 HusInPosition="@hu"
                         DeviceHasBeenClicked="DeviceHasBeenClicked"
                         MarkedDevices="@MarkedDevices" />
         }

@@ -26,8 +26,7 @@ namespace PmsViz.Core.Dtos
                 {
                     rgvs.Add(new Dictionary<string, object>()
                         {
-                            { "Hu",  item.GetValueAsString("mtru_ident") },
-                       
+                            { "Hu",  item.GetValueAsString("mtru_ident") },                   
                         });
                 }
                 return rgvs;                

@@ -170,12 +170,9 @@ namespace PmsViz.Core.Models
             return "E";
         }
 
-        public FlcLoopHuDevice GetDeviceInfo(List<Dictionary<string, object>> _data, string rgv)
+        public Dictionary<string, object> GetHuInformation(List<Dictionary<string, object>> _data, string huId)
         {
-            var data = _data.Where(x => x.GetValueAsString("fdzp_device") == rgv).FirstOrDefault();
-            if (data == null)
-                return new FlcLoopHuDevice();
-            return new FlcLoopHuDevice(data);
+            return _data.Where(x => x.GetValueAsString("mtru_ident") == huId).FirstOrDefault();            
         }
 
         public List<Dictionary<string, object>> GetDataForZone(

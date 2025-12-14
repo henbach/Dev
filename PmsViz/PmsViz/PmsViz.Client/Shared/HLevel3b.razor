@@ -1,34 +1,13 @@
 ﻿@foreach (var deviceId in MarkedDevices)
 {
-    var huDev = ZoneInGridHelper.GetDeviceInfo(Data, deviceId);
-
-    <div style="border-style:solid; border-color:darkslategray; padding:5px; margin-bottom:10px;">
-        <div style="display:flex; flex-direction:row; gap:10px; font-size:20px">
-            <div>@huDev.Id</div>
-            <div style="font-weight:bold; background-color:cornsilk; color:blue;">@huDev.CurrentZone</div>
-            <div>( @huDev.OpModus )</div>
-        </div>
-        @if (string.IsNullOrEmpty(huDev.Hu) == false)
+    var huDev = ZoneInGridHelper.GetHuInformation(Data, deviceId);
+    <div class= "dict-container" >
+        @foreach(var p in huDev)
         {
-            <div style="display:flex; flex-direction:row; gap:10px; font-size:30px">
-                <div style="margin:5px;padding:5px;">Hu:</div>
-                <div style="border-style:dotted; border-width:1px;font-weight:bold;background-color:ivory; color:blue;padding:5px; margin:5px;">@huDev.Hu</div>
-            </div>
-        }
-        @if (string.IsNullOrEmpty(huDev.SrcLoc) == false)
-        {
-            <div style="display:flex; flex-direction:row; gap:10px; font-size:24px">
-
-                <div>@huDev.SrcLoc</div>
-                @if (string.IsNullOrEmpty(huDev.DstLoc) == false)
-                {
-                    <div style="font-weight:bold;"> &rarr; </div>
-                    <div>@huDev.DstLoc</div>
-                }
-            </div>
-        }
-
-    </div>
+            <div>@p.Key</div>
+            <div>@p.Value</div>
+        }       
+    </div>    
 }
 
 @code {
@@ -41,3 +20,15 @@
     public List<Dictionary<string, object>> Data { get; set; } = new();
 
 }
+
+<style>
+    .dict-container{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        gap:5px;
+        border-style:solid;
+        border-width:2px;
+        border-color:blue;
+        padding:10px;
+    }
+</style>
