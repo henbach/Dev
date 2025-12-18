@@ -1,13 +1,17 @@
 ﻿@foreach (var deviceId in MarkedDevices)
 {
     var huDev = ZoneInGridHelper.GetHuInformation(Data, deviceId);
-    <div class= "dict-container" >
-        @foreach(var p in huDev)
-        {
-            <div>@p.Key</div>
-            <div>@p.Value</div>
-        }       
-    </div>    
+    @if (huDev !=  null)
+    {
+        <div class="dict-container">
+            @foreach (var p in huDev)
+            {
+                <div>@p.Key</div>
+                <div>@p.Value</div>
+            }
+        </div>
+    }
+    
 }
 
 @code {

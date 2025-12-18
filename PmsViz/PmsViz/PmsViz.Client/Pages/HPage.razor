@@ -1,7 +1,14 @@
-﻿@page "/"
+﻿@page "/layout/{name}"
 
-@inject ILayoutRepository layoutRepository;
+@inject IPmsLayoutRepository layoutRepository;
 @inject IDataService dataService;
+
+
+@if (LoopDefinition == null)
+{
+    <h3>Layout not found</h3>
+    return;
+}
 
 <AutoRefreshBar RefreshNow="LoadDataAsync" Title="@($"Layout")" />
 
@@ -24,11 +31,13 @@
 </div>
 
 @code {
+    [Parameter]
+    public string name { get; set; }
 
     private List<Dictionary<string, object>> _data = new();
     private List<string> markedDevices = new();
     private AreaZoneInGridHelper ZoneInGridHelper = new();
-    private PmsLayoutDefinition LoopDefinition => layoutRepository.GetAllLayouts().FirstOrDefault();
+    private IPmsLayout LoopDefinition;
 
 
     void DeviceHasBeenClicked_Handler(string deviceId)
@@ -44,15 +53,21 @@
         }
     }
 
-    protected override void OnParametersSet()
-    {       
+    protected override async void OnParametersSet()
+    {
+        LoopDefinition = null;
         markedDevices = new();
+        LoopDefinition = layoutRepository.GetAllLayouts().Where(x => x.Name == name).FirstOrDefault();
+        if (LoopDefinition != null)
+        {
+            ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
+            LoadDataAsync();
+        }
+        
     }
 
     protected override async Task OnInitializedAsync()
     {        
-        ZoneInGridHelper = new AreaZoneInGridHelper(LoopDefinition);
-        await LoadDataAsync();       
     }
 
 

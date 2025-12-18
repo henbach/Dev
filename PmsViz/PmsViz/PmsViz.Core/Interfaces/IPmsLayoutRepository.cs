@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace PmsViz.Core.Interfaces
 {
-    public interface ILayoutRepository
+    public interface IPmsLayoutRepository
     {
-        public IEnumerable<PmsLayoutDefinition> GetAllLayouts();
+        public IEnumerable<IPmsLayout> GetAllLayouts();
     }
 }

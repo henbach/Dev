@@ -42,7 +42,7 @@ namespace PmsViz.Implementations
                                   mpos_block_state, mpos_op_mode_plc, 
                                   mpos_deny_out, mpos_deny_in,mpos_tu, 
                                   mtru_ident, mtru_failure, mtru_weight, mtru_height, 
-                                  mtru_length, mtru_contour
+                                  mtru_length, mtru_contour, mtru_pos_fin, mtru_pos_nxt
                             from  tblmfs_positions
                        left join  tblmfs_tu t1 on mtru_pos_cur = mpos_ident and mtru_state <= 100 
                                     and t1.mtru_date_mov in 

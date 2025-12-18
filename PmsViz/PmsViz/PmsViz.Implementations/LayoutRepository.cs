@@ -1,5 +1,6 @@
 ﻿using PmsViz.Core.Dtos;
 using PmsViz.Core.Interfaces;
+using PmsViz.Implementations.Layouts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,91 +9,19 @@ using System.Threading.Tasks;
 
 namespace PmsViz.Implementations
 {
-    public class LayoutRepository : ILayoutRepository
+    public class LayoutRepository : IPmsLayoutRepository
     {
-        private List<PmsLayoutDefinition> _layouts = new();
+        private List<IPmsLayout> _layouts = new();
         public LayoutRepository()
         {
-            
-        }
-        public IEnumerable<PmsLayoutDefinition> GetAllLayouts()
-        {
             _layouts = new();
-            CreatePmsLayout();
+            _layouts.Add(new PowerCoGroundFloor());
+            _layouts.Add(new PowerCoLevel2());
+
+        }
+        public IEnumerable<IPmsLayout> GetAllLayouts()
+        {            
             return _layouts;
-        }
-
-        private void CreatePmsLayout()
-        {
-            PmsLayoutDefinition pmsLayoutDefinition = new PmsLayoutDefinition();
-
-            pmsLayoutDefinition.ZonePositionMapping = new Dictionary<string, string>
-            {               
-                { "A0", "P21FIAI06-1POS1" },
-                { "A1", "P21MPIN06" },
-                { "A2", "P21MPPREZONE06" },
-                { "A3", "P21MPPREZONE05" },
-                { "A4", "P11MPOUT05" },
-                { "A5", "P11FOAI05-1POS1" },
-                { "B0", "P21FOAI06-1POS1" },
-                { "B1", "P21MPOUT06" },
-                { "B2", "P21MPLIFT01IN01" },
-                { "B3", "P11MPPREZONE04" },
-                { "B4", "P11MPIN05" },
-                { "B5", "P11FIAI05-1POS1" },
-                { "C0", "P21FIAI07-1POS1" },
-                { "C1", "P21MPIN07" },
-                { "C2", "P21MPPREZONE07" },
-                { "C3", "P21MPLIFT01OUT01" },
-                { "C4", "P11MPOUT04" },
-                { "C5", "P11FOAI04-1POS1" },
-
-
-
-            };
-
-            pmsLayoutDefinition.Directions = new Dictionary<string, string>
-            {
-                { "N", "1-10" },
-                { "S", "11-20" },
-                { "E", "21-30" },
-                { "W", "31-40" }
-            };
-            pmsLayoutDefinition.Zones = new string[]
-            {
-                "A0,A0,A0,ww,ww,ww,A1,A1,A1,ww,ww,A2,A2,A2,ww,ww,ww,ww,A3,A3,A3,ww,ww,ww,ww,ww,ww,ww,ww,A4,A4,A4,ww,ww,ww,A5,A5,A5",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,ss,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "B0,B0,B0,ee,ee,ee,B1,B1,B1,ee,ee,ee,ss,--,--,--,--,--,B2,B2,B2,--,--,--,B3,B3,B3,ee,ee,B4,B4,B4,ee,ee,ee,B5,B5,B5",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,ss,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "C0,C0,C0,ww,ww,ww,C1,C1,C1,ww,ww,C2,C2,C2,ww,ww,C3,C3,ww,L1,--,--,--,--,--,nn,ww,ww,ww,C4,C4,C4,ww,ww,ww,C5,C5,C5",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "D0,D0,D0,ee,ee,ee,D1,D1,D1,ee,ee,ee,ss,--,--,--,--,--,--,--,--,--,--,--,D2,D2,D2,ee,ee,D3,D3,D3,ee,ee,ee,D4,D4,D4",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "E0,E0,E0,ww,ww,ww,E1,E1,E1,ww,ww,E2,E2,E2,--,--,--,--,--,--,--,--,--,--,--,n,ww,ww,ww,E3,E3,E3,ww,ww,ww,E4,E4,E4",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "F0,F0,F0,ee,ee,ee,F1,F1,F1,ee,ee,ee,XX,ww,ww,ww,F2,F2,ww,L2,--,--,--,--,F3,F3,F3,ee,ee,F4,F4,F4,ee,ee,ee,F5,F5,F5",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,nn,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "G0,G0,G0,ww,ww,ww,G1,G1,G1,ww,ww,G2,G2,G2,--,--,--,--,G3,G3,G3,--,--,--,--,nn,ww,ww,ww,G4,G4,G4,ww,ww,ww,G5,G5,G5",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,nn,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "H0,H0,H0,ee,ee,ee,H1,H1,H1,ee,ee,ee,XX,--,--,--,--,--,--,nn,--,--,--,--,H2,H2,H2,ee,ee,H3,H3,H3,ee,ee,ee,H4,H4,H4",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,nn,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "I0,I0,I0,ww,ww,ww,I1,I1,I1,ww,ww,I2,I2,I2,--,--,--,--,--,nn,--,--,--,--,--,nn,ww,ww,ww,I3,I3,I3,ww,ww,ww,I4,I4,I4",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,nn,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "J0,J0,J0,ee,ee,ee,J1,J1,J1,ee,ee,ee,ss,ee,ee,ee,ee,ee,J2,J2,J2,ee,ee,ee,J3,J3,J3,ee,ee,J4,J4,J4,ee,ee,ee,J5,J5,J5",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,--,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,ss,ww,ww,ww,nn,ww,ww,M1,M1,M1,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,K2,K2,K2,ww,ww,K1,K1,K1,--,--,--,--,--,--,--,ss,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,ss,--,--,--,nn,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,--,ss,--,--,--,nn,ww,ww,M3,M3,M3,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,ss,--,--,--,--,--,--,--,M2,M2,M2,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,K4,K4,K4,ww,ww,K3,K3,K3,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--",
-                "--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--,--",
-            };
-            _layouts.Add(pmsLayoutDefinition);
-        }
+        }      
     }
 }

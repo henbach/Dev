@@ -1,4 +1,5 @@
 ﻿using PmsViz.Core.Dtos;
+using PmsViz.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,12 +44,12 @@ namespace PmsViz.Core.Models
         public const string nonZonesDefinition = "--;ww;ss;nn;ee;XX";
         List<AreaZoneInGrid> areaZones = new List<AreaZoneInGrid>();
 
-        private PmsLayoutDefinition LoopDefinition;
+        private IPmsLayout LoopDefinition;
 
         public AreaZoneInGridHelper()
         {
         }
-        public AreaZoneInGridHelper(PmsLayoutDefinition loopDefinition)
+        public AreaZoneInGridHelper(IPmsLayout loopDefinition)
         {
             LoopDefinition = loopDefinition;
             Process();

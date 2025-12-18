@@ -1,3 +1,30 @@
 ﻿@inherits LayoutComponentBase
+<div class="top-menu">
+    <div>PowerCo Inbound</div>
+    <a href="/layout/GroundFloor"> GroundFloor</a>
+    <a href="/layout/Level2"> Level2</a>
+    <div>PowerCo Outbound</div>
+    <a href="/layout/GroundFloor"> GroundFloor</a>
+    <a href="/layout/Level2"> Level2</a>
 
+</div>
 <main> @Body </main>
+
+<style>
+    .top-menu{
+        display:flex;
+        flex-direction:row;
+        gap:10px;
+    }
+
+    .top-menu * {
+        border-style:solid;
+        border-width:2px;
+        padding:10px;
+    }
+
+    .top-menu div{
+        border-style: none;
+        font-weight:bold;
+    }
+</style>

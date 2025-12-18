@@ -21,8 +21,8 @@ public static class AppServices
         IDataService dataService = new DataService(oracleDao);
         services.AddSingleton<IDataService>(dataService);
 
-        ILayoutRepository layoutRepository = new LayoutRepository();
-        services.AddSingleton<ILayoutRepository>(layoutRepository);
+        IPmsLayoutRepository layoutRepository = new LayoutRepository();
+        services.AddSingleton<IPmsLayoutRepository>(layoutRepository);
 
 
         return services;
