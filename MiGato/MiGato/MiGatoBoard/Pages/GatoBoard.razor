@@ -1,0 +1,180 @@
+﻿@page "/gato"
+@implements IGatoBoard
+@inject IGatoController gatoController
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Nav
+
+<div class="gato-container">
+    <h2>MiGato Board</h2>
+    <h3>@ResultMessage</h3>
+    <button  class ="gato-new-game" @onclick="()=>GameRestarted?.Invoke(this, EventArgs.Empty)">Restart Game</button>
+
+    <div class="gato-grid">
+        @for(int i=0;i<3;i++)
+        {
+            @for(int j=0; j<3; j++)
+            {                
+                var row =i;
+                var column = j;
+
+                <div class="@GetCellClass(row, column)" @onclick="()=>CellClicked(row, column)">
+                    @{
+                        var cellContent = GetCellContent(row, column);
+                    }
+                    <div class="@GetCellContentClass(cellContent)">@cellContent</div>
+                </div>
+            }
+        }        
+    </div>
+</div>
+
+
+@code {
+    private string ResultMessage = string.Empty;   
+    private char[,] board => gatoController.GetCurrentBoardState();
+    private HubConnection? hub;   
+
+    protected override async Task OnInitializedAsync()
+    {
+        gatoController.SetGatoBoard(this);
+
+        hub = new HubConnectionBuilder()
+        .WithUrl(Nav.ToAbsoluteUri("/gatoHub"))
+        .WithAutomaticReconnect()
+        .Build();
+
+        hub.On<int, int>("ReceiveMove", (row, col) =>
+        {
+            InvokeAsync(() =>
+            {
+                UserMarkPlaced?.Invoke(this, new UserMarkEventArgs(row, col));
+                StateHasChanged();
+            });
+        });
+
+        hub.On<string>("ReceiveMessage", (message) =>
+        {
+            InvokeAsync(() =>
+            {
+                ResultMessage = message;
+                StateHasChanged();
+
+            });
+        });
+
+        await hub.StartAsync();
+        Console.WriteLine("hub: " + hub.State);
+        await hub.SendAsync("JoinGame", "10");
+
+    }
+
+    public void ResetBoard()
+    {
+
+    }
+
+    public bool PlaceMark(int row, int column, char mark)
+    {
+        return true;
+    }
+
+    public void ShowResult(string result)
+    {
+        ResultMessage = result;
+        hub.SendAsync("SendMessage", "10", result);
+    }
+
+    public event EventHandler<UserMarkEventArgs> UserMarkPlaced;
+    public event EventHandler GameRestarted;
+
+    async Task CellClicked(int row, int column)
+    {       
+        UserMarkPlaced?.Invoke(this, new UserMarkEventArgs(row, column));
+        await hub.SendAsync("SendMove", "10", row, column);
+    }
+
+    string GetCellClass(int x, int y)
+    {
+        if(gatoController.WinnerCombination != string.Empty)
+        {
+            if (gatoController.WinnerCombination.Contains($"{x}{y}"))
+            {
+                return $"grid winner-cell";
+            }
+        }
+
+        return $"grid c{x}{y}";
+    }
+
+    char GetCellContent(int x, int y)
+    {
+        return board[x, y];
+    }   
+
+    string GetCellContentClass(char content)
+    {
+        string cssClass = "grid-cell-content {0}";
+        string secondClass = string.Empty;
+
+        if(content == gatoController.PlayerOneMark)
+        {
+            secondClass = "player-one";
+        }
+        else if(content == gatoController.PlayerTwoMark)
+        {
+            secondClass = "player-two";
+        }
+        return string.Format(cssClass, secondClass);
+    }
+
+}
+
+<style>
+    .gato-container{
+        display:flex;
+        gap:10px;
+        flex-direction:column;
+    }
+    .gato-new-game{
+        width:100px;
+        height:100px;
+    }
+    .gato-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 200px);
+        grid-template-rows: repeat(3, 200px);
+        gap:5px;
+        border-width:1px;
+        
+    }
+
+    .grid{
+        background-color: lightgray;     
+    }
+
+    .grid-cell-content{
+        font-size: 48px;
+        font-weight:bold;
+        height:100%;
+        width:100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .player-one{
+        background-color:aqua;
+        color:dodgerblue;
+    }
+
+    .player-two{
+        background-color:lightcoral;
+        color:crimson;
+    }
+
+    
+
+    .winner-cell{
+        border: 10px solid lime;
+    }
+</style>

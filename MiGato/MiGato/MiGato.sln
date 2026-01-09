@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiGato.Core", "MiGato.Core\MiGato.Core.csproj", "{94114837-332E-4100-AB44-23BA35C2810D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiGatoBoard", "MiGatoBoard\MiGatoBoard.csproj", "{ADCB6A17-2635-4CE5-9E3A-E7A95B007D88}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94114837-332E-4100-AB44-23BA35C2810D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94114837-332E-4100-AB44-23BA35C2810D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94114837-332E-4100-AB44-23BA35C2810D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94114837-332E-4100-AB44-23BA35C2810D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADCB6A17-2635-4CE5-9E3A-E7A95B007D88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADCB6A17-2635-4CE5-9E3A-E7A95B007D88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADCB6A17-2635-4CE5-9E3A-E7A95B007D88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADCB6A17-2635-4CE5-9E3A-E7A95B007D88}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {018ACAD3-D1C4-4E1F-BC17-2C665244DAF7}
+	EndGlobalSection
+EndGlobal
