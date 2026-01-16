@@ -10,7 +10,7 @@ namespace WinCommands
     {
         public static string GetFindStr(string path, string toSearch, string filter="", string options ="")
         {
-            string commandOptions = "/s /i /n";
+            string commandOptions = "/n /s /i /c:";
             if(string.IsNullOrEmpty(options) == false)
             {
                 commandOptions = options;
@@ -33,7 +33,7 @@ namespace WinCommands
                 commandPath = commandFilter;
             }
 
-            return $"{commandOptions} \"{toSearch}\"  \"{commandPath}\" ";
+            return $"{commandOptions}\"{toSearch}\"  \"{commandPath}\" ";
 
         }
 

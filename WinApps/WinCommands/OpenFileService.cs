@@ -11,7 +11,7 @@ namespace WinCommands
         public void RequestService(string path, string line)
         {
             string commandParameters = $"/c start \"\" \"{path}\"";
-            if (path.EndsWith(".pas"))
+            if (path.EndsWith(".pas") || path.EndsWith(".cs"))
             {
                 commandParameters = $"/c start \"\" \"" + @"C:\Portable\PortableApps\PortableApps\Notepad++Portable\App\Notepad++\notepad++.exe" + $"\" -n{line} \"{path}\"";
             }

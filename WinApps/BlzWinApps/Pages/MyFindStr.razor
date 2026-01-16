@@ -34,55 +34,64 @@
 
 </div>
 
-<table class="nice-table"> 
-    <thead> 
-        <tr> 
-            <th>File Path</th>       
-            <th>Description</th>
-        </tr> 
-    </thead> 
-    <tbody> 
-        @foreach(var item in findStrSingleResults)
-        {
+@if (isFindStrRunning)
+{
+    <div>
+        running....
+    </div>
+}
+else
+{
+    <table class="nice-table"> 
+        <thead> 
             <tr> 
-                <td style="min-width:30%">
-                    <div class="entry-container">                 
-                        <div>
-                            @item.FilePath
+                <th>File Path</th>       
+                <th>Description</th>
+            </tr> 
+        </thead> 
+        <tbody> 
+            @foreach(var item in findStrSingleResults)
+            {
+                <tr> 
+                    <td style="min-width:30%">
+                        <div class="entry-container">                 
+                            <div>
+                                @item.FilePath
+                            </div>
+                            <div style="font-size:24px; font-weight:bold">
+                                @item.FilePath.Split('\\')[^1];
+                            </div>
+                            <div>
+                                <button @onclick="()=>OpenPath(item.FilePath, item.Line)">Open file</button>
+                            </div>
                         </div>
-                        <div style="font-size:24px; font-weight:bold">
-                            @item.FilePath.Split('\\')[^1];
+
+                    </td>               
+
+                    <td>
+                        <div class="form-row">
+                            <label>Lines to show</label>
+                            <input type="text" @bind="item.LinesNumberToExtract" />
                         </div>
-                        <div>
-                            <button @onclick="()=>OpenPath(item.FilePath, item.Line)">Open file</button>
-                        </div>
-                    </div>
+                        <table>
+                            <tbody>
+                                @foreach(var line in item.FileExtract)
+                                {
+                                    <tr>
+                                        <td class="file-extract" style="color:@(line.ToUpper().Contains(item.TextToSearch.ToUpper()) ? "lightPink":"aquamarine")">
+                                            <pre>@line</pre>
+                                        </td>
+                                    </tr>                                
+                                }                         
+                            </tbody>
+                        </table>
+                    </td> 
 
-                </td>               
-
-                <td>
-                    <div class="form-row">
-                        <label>Lines to show</label>
-                        <input type="text" @bind="item.LinesNumberToExtract" />
-                    </div>
-                    <table>
-                        <tbody>
-                            @foreach(var line in item.FileExtract)
-                            {
-                                <tr>
-                                    <td class="file-extract" style="color:@(line.ToUpper().Contains(item.TextToSearch.ToUpper()) ? "lightPink":"aquamarine")">
-                                        <pre>@line</pre>
-                                    </td>
-                                </tr>                                
-                            }                         
-                        </tbody>
-                    </table>
-                </td> 
-
-            </tr>             
-        }
-    </tbody>
-</table>
+                </tr>             
+            }
+        </tbody>
+    </table>
+}
 
 @code {
 
@@ -91,11 +100,12 @@
     public string fileExtension { get; set; } = "*.*";
     List<FindStrSingleResult> findStrSingleResults = new List<FindStrSingleResult>();
     private bool showFolderPicker = false;
+    private bool isFindStrRunning = false;
 
     private async Task Submit()    {
-
+        isFindStrRunning = true;
         findStrSingleResults = await findstrService.RequestServiceAsync(filePath, textToSearch, fileExtension);
-
+        isFindStrRunning = false;
     }
 
     private void PathSelected(string pathSelected)
