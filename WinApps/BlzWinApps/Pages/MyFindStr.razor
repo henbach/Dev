@@ -1,0 +1,247 @@
+﻿@page "/myfindStr"
+@inject FindStrService findstrService;
+@inject OpenFileService startCommandService;
+@inject NavigationManager Nav
+<div class="input-container">
+
+    <div class="form-container">
+        <h3>Enter Your Data</h3>
+
+        <div class="form-row">
+            <label>File Path:</label>
+            <input type="text" @bind="filePath" />
+            <button @onclick="openFileDialog">Show/Hide Folder Picker</button>
+        </div>
+
+        <div class="form-row">
+            <label>Text to search:</label>
+            <input type="text" @bind="textToSearch" />
+        </div>
+
+        <div class="form-row">
+            <label>File extension to search in:</label>
+            <input type="text" @bind="fileExtension" />
+        </div>
+
+        <button class="submit-btn" @onclick="Submit">Search string in folder path</button>
+        <button class="submit-btn" style="margin-top:10px; background-color:green;" @onclick="()=>{ findStrSingleResults = new();}">Clean results</button>
+    </div>
+
+    @if (showFolderPicker)
+    {
+        <PathPicker  OnSelect="PathSelected"></PathPicker>
+    }
+
+</div>
+
+<table class="nice-table"> 
+    <thead> 
+        <tr> 
+            <th>File Path</th>       
+            <th>Description</th>
+        </tr> 
+    </thead> 
+    <tbody> 
+        @foreach(var item in findStrSingleResults)
+        {
+            <tr> 
+                <td style="min-width:30%">
+                    <div class="entry-container">                 
+                        <div>
+                            @item.FilePath
+                        </div>
+                        <div style="font-size:24px; font-weight:bold">
+                            @item.FilePath.Split('\\')[^1];
+                        </div>
+                        <div>
+                            <button @onclick="()=>OpenPath(item.FilePath, item.Line)">Open file</button>
+                        </div>
+                    </div>
+
+                </td>               
+
+                <td>
+                    <div class="form-row">
+                        <label>Lines to show</label>
+                        <input type="text" @bind="item.LinesNumberToExtract" />
+                    </div>
+                    <table>
+                        <tbody>
+                            @foreach(var line in item.FileExtract)
+                            {
+                                <tr>
+                                    <td class="file-extract" style="color:@(line.ToUpper().Contains(item.TextToSearch.ToUpper()) ? "lightPink":"aquamarine")">
+                                        <pre>@line</pre>
+                                    </td>
+                                </tr>                                
+                            }                         
+                        </tbody>
+                    </table>
+                </td> 
+
+            </tr>             
+        }
+    </tbody>
+</table>
+
+@code {
+
+    public string filePath { get; set; }
+    public string textToSearch { get; set; }
+    public string fileExtension { get; set; } = "*.*";
+    List<FindStrSingleResult> findStrSingleResults = new List<FindStrSingleResult>();
+    private bool showFolderPicker = false;
+
+    private async Task Submit()    {
+
+        findStrSingleResults = await findstrService.RequestServiceAsync(filePath, textToSearch, fileExtension);
+
+    }
+
+    private void PathSelected(string pathSelected)
+    {
+        filePath = pathSelected;
+    }
+
+    private void OpenPath(string path, string line)
+    {
+        startCommandService.RequestService(path, line);
+    }
+
+    private void openFileDialog()
+    {
+        showFolderPicker = !showFolderPicker;
+    }
+
+    protected override void OnInitialized()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        filePath = query["path"];
+    }
+}
+
+<style>
+
+    .entry-container{
+Async
+        display:grid;
+        grid-template-columns: 1fr;
+        gap:15px;
+    }
+
+    .form-container { 
+        width: 700px; 
+        padding: 20px; 
+        /*margin: 30px auto; */
+        background: #f8f9fa; 
+        border-radius: 12px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        font-family: Segoe UI, sans-serif; 
+    } 
+    
+    .form-container h3 { 
+        margin-bottom: 20px; 
+        text-align: center; 
+        color: #333; 
+    } 
+    .form-row { 
+        display: flex; 
+        flex-direction: column; 
+        margin-bottom: 15px; 
+    } 
+    .form-row label { 
+        margin-bottom: 5px; 
+        font-weight: 600; 
+        color: #555; 
+    } 
+    .form-row input { 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 6px; 
+        font-size: 14px; 
+        transition: border-color 0.2s ease; 
+    } 
+    .form-row input:focus { 
+        border-color: #0078d4; 
+        outline: none; 
+    } 
+    .submit-btn { 
+        width: 100%; 
+        padding: 12px; 
+        background: #0078d4; 
+        color: white; 
+        border: none; 
+        border-radius: 6px; 
+        font-size: 15px; 
+        cursor: pointer; 
+        transition: background 0.2s ease; 
+    } 
+    .submit-btn:hover { 
+        background: #005fa3; 
+    }
+
+    .nice-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Segoe UI, sans-serif;
+        background: #fff;
+        border-radius: 8px;
+        
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nice-table th {
+        background: #f2f4f7;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .nice-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee;
+        vertical-align: top;
+        color: #444;
+    }
+    /* Column behavior */
+
+    
+
+    .nice-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .input-container{
+        display:flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .simple-table{
+        all:unset;
+    }
+
+    .nice-table table td
+    .nice-table table tr
+    .nice-table table tbody {
+        all: unset;
+    }
+
+    .file-extract{
+        background-color: black;
+        font-family: Consolas, "Lucida Console", monospace;
+        font-size:24px;
+        font-weight:bold;
+
+    }
+
+    .entry-container{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+    }
+
+</style>

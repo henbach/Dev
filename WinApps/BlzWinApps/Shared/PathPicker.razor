@@ -1,0 +1,81 @@
+﻿<div class="folder-picker">
+    <h4 style="white-space:pre-wrap; overflow-wrap:anywhere">Current path: @CurrentPath</h4>
+    <button @onclick="GoUp">Go up</button>
+    <ul>
+        @foreach(var folder in directories)
+        {
+            <li @onclick="()=>Navigate(folder)">
+                @Path.GetFileName(folder);
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter]
+    public string StartPath { get; set; } = @"c:\";
+    [Parameter]
+    public EventCallback<string> OnSelect { get; set; }
+
+    private string CurrentPath;
+    private List<string> directories = new();
+
+    protected override void OnInitialized()
+    {
+        CurrentPath = StartPath;
+        Load();
+    }
+
+    private void Load()
+    {
+        directories = Directory.GetDirectories(CurrentPath).ToList();
+    }
+
+    private void Navigate(string path)
+    {
+        CurrentPath = path;
+        Load();
+        OnSelect.InvokeAsync(CurrentPath);
+    }
+
+    private void GoUp()
+    {
+        var parent = Directory.GetParent(CurrentPath);
+        if(parent!=null)
+        {
+            Navigate(parent.FullName);
+        }
+    }
+
+
+}
+
+<style>
+    .folder-picker{
+        width:500px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+
+    .folder-picker ul{
+        list-style:none;
+        padding-left:0;
+    }
+
+    .folder-picker li {
+        padding: 4px;
+        cursor: pointer;
+    }
+
+    .folder-picker li:hover{
+        background:#f0f0f0;
+    }
+
+    .select-btn{
+        margin-top: 10px;
+        padding: 6px 12px;
+    }
+
+
+</style>
