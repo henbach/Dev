@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinCommands", "WinCommands\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlzWinApps", "BlzWinApps\BlzWinApps.csproj", "{134EFDC4-AD9B-4F8F-9AA7-4380D8FCB176}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinnApps.Common", "WinnApps.Common\WinnApps.Common.csproj", "{CC3D0100-0A39-495C-80F6-D963C32F6BCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{134EFDC4-AD9B-4F8F-9AA7-4380D8FCB176}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{134EFDC4-AD9B-4F8F-9AA7-4380D8FCB176}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{134EFDC4-AD9B-4F8F-9AA7-4380D8FCB176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC3D0100-0A39-495C-80F6-D963C32F6BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC3D0100-0A39-495C-80F6-D963C32F6BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC3D0100-0A39-495C-80F6-D963C32F6BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC3D0100-0A39-495C-80F6-D963C32F6BCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

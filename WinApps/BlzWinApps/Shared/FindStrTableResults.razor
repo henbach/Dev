@@ -1,0 +1,61 @@
+﻿<table class="nice-table">
+    <thead>
+        <tr>
+            <th>File Path</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in findStrSingleResults)
+        {
+            <tr>
+                <td style="min-width:30%">
+                    <div class="entry-container">
+                        <div>
+                            @item.FilePath
+                        </div>
+                        <div style="font-size:24px; font-weight:bold">
+                            @item.FilePath.Split('\\')[^1];
+                        </div>
+                        <div>
+                            <button @onclick="()=> PathSelectedForOpening.InvokeAsync(new FileSelectedArgs(item.FilePath, int.Parse(item.Line)))">Open file</button>
+                        </div>
+                    </div>
+
+                </td>
+
+                <td>
+                    <div class="form-row">
+                        <label>Lines to show</label>
+                        <input type="text" @bind="item.LinesNumberToExtract" />
+                    </div>
+                    <table>
+                        <tbody>
+                            @foreach (var line in item.FileExtract)
+                            {
+                                <tr>
+                                    <td class="file-extract" style="color:@(line.ToUpper().Contains(item.TextToSearch.ToUpper()) ? "lightPink":"aquamarine")">
+                                        <pre>@line</pre>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public List<FindStrSingleResult> findStrSingleResults { get; set; } = new List<FindStrSingleResult>();
+    [Parameter]
+    public EventCallback<FileSelectedArgs> PathSelectedForOpening { get; set; }
+
+    protected override bool ShouldRender() => false;
+
+    public void Refresh() =>  StateHasChanged();   
+
+}

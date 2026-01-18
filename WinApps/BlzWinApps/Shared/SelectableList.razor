@@ -1,0 +1,32 @@
+﻿<div class="form-container selectable-list" >
+    <h3>@Title</h3>
+    <ul>
+        
+        @foreach(var item in Items)
+        {
+            <li @ondblclick="()=>OnItemDoubleClick(item)">@item</li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "";
+    [Parameter]
+    public string[] Items { get; set; } = new string[0];
+    [Parameter]
+    public EventCallback<string> OnItemSelected { get; set; }
+
+    private void OnItemDoubleClick(string item)
+    {
+        OnItemSelected.InvokeAsync(item);
+    }
+}
+
+<style>
+
+  
+
+    
+
+</style>

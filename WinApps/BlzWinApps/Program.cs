@@ -2,6 +2,7 @@ using BlzWinApps.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using WinCommands;
+using WinnApps.Common.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<FindStrService>();
 builder.Services.AddSingleton<OpenFileService>();
+builder.Services.AddSingleton<UserPersistentDataService>();
 
 
 var app = builder.Build();

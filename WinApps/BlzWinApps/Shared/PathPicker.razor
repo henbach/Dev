@@ -1,4 +1,4 @@
-﻿<div class="folder-picker">
+﻿<div class="form-container">
     <h4 style="white-space:pre-wrap; overflow-wrap:anywhere">Current path: @CurrentPath</h4>
     <button @onclick="GoUp">Go up</button>
     <ul>
@@ -51,31 +51,7 @@
 }
 
 <style>
-    .folder-picker{
-        width:500px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-    }
 
-    .folder-picker ul{
-        list-style:none;
-        padding-left:0;
-    }
-
-    .folder-picker li {
-        padding: 4px;
-        cursor: pointer;
-    }
-
-    .folder-picker li:hover{
-        background:#f0f0f0;
-    }
-
-    .select-btn{
-        margin-top: 10px;
-        padding: 6px 12px;
-    }
-
+   
 
 </style>

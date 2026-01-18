@@ -2,6 +2,7 @@
 @inject FindStrService findstrService;
 @inject OpenFileService startCommandService;
 @inject NavigationManager Nav
+@inject UserPersistentDataService userPersistentDataService;
 <div class="input-container">
 
     <div class="form-container">
@@ -10,7 +11,12 @@
         <div class="form-row">
             <label>File Path:</label>
             <input type="text" @bind="filePath" />
-            <button @onclick="openFileDialog">Show/Hide Folder Picker</button>
+            <div style="padding-top:5px; display:flex; gap:5px;">
+                <button @onclick="()=>{ showFolderPicker = !showFolderPicker;}">Show/Hide Folder Picker</button>
+                <button @onclick="()=>{ showHistory = !showHistory;  }">Show/Hide History</button>
+                <button @onclick="AddFavorites">Add to favorites</button>
+            </div>
+
         </div>
 
         <div class="form-row">
@@ -24,12 +30,19 @@
         </div>
 
         <button class="submit-btn" @onclick="Submit">Search string in folder path</button>
-        <button class="submit-btn" style="margin-top:10px; background-color:green;" @onclick="()=>{ findStrSingleResults = new();}">Clean results</button>
+        <button class="submit-btn" style="margin-top:10px; background-color:green;" @onclick="()=>{ findStrSingleResults = new(); findStrTableResults.Refresh();}">Clean results</button>
     </div>
 
     @if (showFolderPicker)
     {
         <PathPicker  OnSelect="PathSelected"></PathPicker>
+    }
+
+    <SelectableList Title="Favorites" Items="userPersistentData.PathFavorites.ToArray()" OnItemSelected="PathSelected"></SelectableList>
+
+    @if (showHistory)
+    {
+        <SelectableList Title="Path history" Items="userPersistentData.PathHistory.OrderByDescending(x=>x).ToArray()" OnItemSelected="PathSelected"></SelectableList>
     }
 
 </div>
@@ -42,55 +55,10 @@
 }
 else
 {
-    <table class="nice-table"> 
-        <thead> 
-            <tr> 
-                <th>File Path</th>       
-                <th>Description</th>
-            </tr> 
-        </thead> 
-        <tbody> 
-            @foreach(var item in findStrSingleResults)
-            {
-                <tr> 
-                    <td style="min-width:30%">
-                        <div class="entry-container">                 
-                            <div>
-                                @item.FilePath
-                            </div>
-                            <div style="font-size:24px; font-weight:bold">
-                                @item.FilePath.Split('\\')[^1];
-                            </div>
-                            <div>
-                                <button @onclick="()=>OpenPath(item.FilePath, item.Line)">Open file</button>
-                            </div>
-                        </div>
-
-                    </td>               
-
-                    <td>
-                        <div class="form-row">
-                            <label>Lines to show</label>
-                            <input type="text" @bind="item.LinesNumberToExtract" />
-                        </div>
-                        <table>
-                            <tbody>
-                                @foreach(var line in item.FileExtract)
-                                {
-                                    <tr>
-                                        <td class="file-extract" style="color:@(line.ToUpper().Contains(item.TextToSearch.ToUpper()) ? "lightPink":"aquamarine")">
-                                            <pre>@line</pre>
-                                        </td>
-                                    </tr>                                
-                                }                         
-                            </tbody>
-                        </table>
-                    </td> 
-
-                </tr>             
-            }
-        </tbody>
-    </table>
+    <FindStrTableResults 
+    findStrSingleResults="findStrSingleResults" 
+    PathSelectedForOpening="OpenPath" 
+    @ref="findStrTableResults"/>
 }
 
 @code {
@@ -101,11 +69,18 @@ else
     List<FindStrSingleResult> findStrSingleResults = new List<FindStrSingleResult>();
     private bool showFolderPicker = false;
     private bool isFindStrRunning = false;
+    private bool showHistory = false;
+    private UserPersistentData userPersistentData = new();
+    private FindStrTableResults findStrTableResults;
 
     private async Task Submit()    {
         isFindStrRunning = true;
         findStrSingleResults = await findstrService.RequestServiceAsync(filePath, textToSearch, fileExtension);
         isFindStrRunning = false;
+        findStrTableResults.Refresh();
+             
+        userPersistentData.AddPathHistory(filePath);
+        await userPersistentDataService.SaveAsync(userPersistentData);       
     }
 
     private void PathSelected(string pathSelected)
@@ -113,28 +88,31 @@ else
         filePath = pathSelected;
     }
 
-    private void OpenPath(string path, string line)
+    private void OpenPath(FileSelectedArgs args)
     {
-        startCommandService.RequestService(path, line);
+        startCommandService.RequestService(args);
     }
 
-    private void openFileDialog()
+    private async Task AddFavorites()
     {
-        showFolderPicker = !showFolderPicker;
+        userPersistentData.AddToFavorites(filePath);
+        await userPersistentDataService.SaveAsync(userPersistentData);
     }
 
-    protected override void OnInitialized()
+    protected  override async Task OnInitializedAsync()
     {
         var uri = Nav.ToAbsoluteUri(Nav.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
         filePath = query["path"];
+
+        userPersistentData = await userPersistentDataService.LoadAsync();
+
     }
 }
 
 <style>
 
     .entry-container{
-Async
         display:grid;
         grid-template-columns: 1fr;
         gap:15px;
@@ -228,6 +206,10 @@ Async
         display:flex;
         flex-direction: row;
         justify-content: flex-start;
+        background-color:chocolate;
+        padding:10px;
+        gap:10px;
+        border-radius:15px;
     }
 
     .simple-table{
@@ -253,5 +235,39 @@ Async
         flex-direction:column;
         gap:10px;
     }
+
+    .form-container ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .form-container li {
+        padding: 4px;
+        cursor: pointer;
+    }
+
+    .form-container li:hover {
+        background-color: lightskyblue;
+    }
+
+    .select-btn {
+        margin-top: 10px;
+        padding: 6px 12px;
+    }
+
+    .selectable-list {
+        padding: 35px;
+    }
+
+    .selectable-list ul {
+    }
+
+    .selectable-list li {
+        padding: unset;
+        list-style: decimal;
+        padding-left: 30px;
+    }
+
+
 
 </style>
