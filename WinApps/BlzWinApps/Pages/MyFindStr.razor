@@ -28,9 +28,13 @@
             <label>File extension to search in:</label>
             <input type="text" @bind="fileExtension" />
         </div>
+        <div class="form-row">
+            <label>Number of lines to show:</label>
+            <input type="text" @bind="linesToShow" />
+        </div>
 
         <button class="submit-btn" @onclick="Submit">Search string in folder path</button>
-        <button class="submit-btn" style="margin-top:10px; background-color:green;" @onclick="()=>{ findStrSingleResults = new(); findStrTableResults.Refresh();}">Clean results</button>
+        <button class="submit-btn" style="margin-top:10px; background-color:green;" @onclick="()=>{ singleFindStrResults = new(); }">Clean results</button>
     </div>
 
     @if (showFolderPicker)
@@ -55,10 +59,19 @@
 }
 else
 {
-    <FindStrTableResults 
-    findStrSingleResults="findStrSingleResults" 
-    PathSelectedForOpening="OpenPath" 
-    @ref="findStrTableResults"/>
+    @if(groupedFindStrResults.Count > 0)
+    {
+        <div class="findstr-results-container">
+            <button style="position:fixed;z-index: 99999;" @onclick="()=>{singleFindStrResults = new();}">X</button>
+            <FindStrGroupedResultsView groupedFindStrResults="groupedFindStrResults" OnOpenFileRequested="OpenPath" OnSinglePathWithLineSelected="SetSelectedFindStrResult" />                                
+            @if (selectedFindStrResult != null)
+            {
+                <FindStrFileExtractView selectedFindStrResult="selectedFindStrResult" />
+            }
+           
+        </div>
+    }
+   
 }
 
 @code {
@@ -66,19 +79,44 @@ else
     public string filePath { get; set; }
     public string textToSearch { get; set; }
     public string fileExtension { get; set; } = "*.*";
-    List<FindStrSingleResult> findStrSingleResults = new List<FindStrSingleResult>();
+    public int linesToShow { get; set; } = 5;
+    List<FindStrSingleResult> singleFindStrResults = new List<FindStrSingleResult>();
+    private FindStrSingleResult? selectedFindStrResult;
+
+    List<FindStrGroupedResult> groupedFindStrResults
+    {
+        get
+        {
+            List<FindStrGroupedResult> results = new();
+            foreach (var gp in singleFindStrResults.Select(x=> x.FilePath).Distinct())
+            {
+                if (string.IsNullOrEmpty(gp))
+                    continue;
+
+                FindStrGroupedResult newGp = new FindStrGroupedResult();
+                newGp.FilePath = gp;
+                foreach (var i in singleFindStrResults.Where(x => x.FilePath == gp).ToList())
+                {
+                    newGp.Result.Add(i.Line, i.Sample);
+                }
+                results.Add(newGp);
+            }
+            return results;
+        }
+    }
+
     private bool showFolderPicker = false;
     private bool isFindStrRunning = false;
     private bool showHistory = false;
     private UserPersistentData userPersistentData = new();
-    private FindStrTableResults findStrTableResults;
+
 
     private async Task Submit()    {
         isFindStrRunning = true;
-        findStrSingleResults = await findstrService.RequestServiceAsync(filePath, textToSearch, fileExtension);
+        singleFindStrResults = await findstrService.RequestServiceAsync(filePath, textToSearch, linesToShow, fileExtension );
         isFindStrRunning = false;
-        findStrTableResults.Refresh();
-             
+
+
         userPersistentData.AddPathHistory(filePath);
         await userPersistentDataService.SaveAsync(userPersistentData);       
     }
@@ -92,11 +130,22 @@ else
     {
         startCommandService.RequestService(args);
     }
+    private void OpenPath(string path, int line)
+    {       
+        FileSelectedArgs args = new FileSelectedArgs(path, line);
+        startCommandService.RequestService(args);
+    }
 
     private async Task AddFavorites()
     {
         userPersistentData.AddToFavorites(filePath);
         await userPersistentDataService.SaveAsync(userPersistentData);
+    }
+
+    private void SetSelectedFindStrResult(KeyValuePair<string,string> keyValuePair )
+    {
+        selectedFindStrResult = singleFindStrResults.Where(x => x.FilePath == keyValuePair.Key && x.Line == keyValuePair.Value).FirstOrDefault();
+        selectedFindStrResult.LinesNumberToExtract = linesToShow;
     }
 
     protected  override async Task OnInitializedAsync()
@@ -108,9 +157,32 @@ else
         userPersistentData = await userPersistentDataService.LoadAsync();
 
     }
+
 }
 
 <style>
+
+    .findstr-results-container{
+        position: fixed;
+        z-index: 9999;
+        background-color:cyan;
+        border: 2px solid blue;
+        border-radius: 20px;
+        bottom:0;
+        height:100%;
+        width:100%;
+        top:0;
+        overflow: auto;
+        padding:10px;
+    }
+
+  
+
+
+
+   
+
+    
 
     .entry-container{
         display:grid;
@@ -222,13 +294,7 @@ else
         all: unset;
     }
 
-    .file-extract{
-        background-color: black;
-        font-family: Consolas, "Lucida Console", monospace;
-        font-size:24px;
-        font-weight:bold;
-
-    }
+   
 
     .entry-container{
         display:flex;

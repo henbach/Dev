@@ -1,0 +1,69 @@
+﻿<div class="grouped-results-container">
+    @foreach (var gpr in groupedFindStrResults)
+    {
+        <h2>@gpr.FilePath.Split('\\')[^1]</h2>
+        <div style="border:2px solid black; padding:10px;">
+            @foreach (var kpv in gpr.Result)
+            {
+                <div class="single-path-line-container" @onclick="()=>SetSelectedFindStrResult(gpr.FilePath, kpv.Key)">
+                    <button @onclick="()=>{ OpenPath(gpr.FilePath, int.Parse(kpv.Key));}">Open</button>
+                    <div>@($"{int.Parse(kpv.Key).ToString("D3")}:{kpv.Value}")</div>
+                </div>
+            }
+        </div>
+
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<FindStrGroupedResult> groupedFindStrResults { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<FileSelectedArgs> OnOpenFileRequested { get; set; }
+
+    [Parameter]
+    public EventCallback<KeyValuePair<string, string>> OnSinglePathWithLineSelected { get; set; }
+
+    private void SetSelectedFindStrResult(string filePath, string line)
+    {
+        OnSinglePathWithLineSelected.InvokeAsync(new KeyValuePair<string, string>(filePath, line));
+    }
+
+    private void OpenPath(string path, int line)
+    {
+        FileSelectedArgs args = new FileSelectedArgs(path, line);
+        OnOpenFileRequested.InvokeAsync(args);        
+    }
+
+}
+
+<style>
+    .grouped-results-container {
+        width: 700px;
+        height: 100vh border: 2px solid black;
+        border-radius: 15px;
+        overflow-wrap: break-word;
+        padding: 15px;
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        background-color: hotpink;
+        margin-top: 15px;
+        font-weight:bolder;
+        color:white;
+    }
+
+    .single-path-line-container{
+        padding-left:15px;
+        display:flex;
+        gap:10px;
+        margin-top:10px;
+        border-radius:15px;
+    }
+
+    .single-path-line-container:hover{
+        background-color:aqua;
+         color:black;
+    }
+</style>

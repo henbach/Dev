@@ -1,0 +1,45 @@
+﻿<div class="selected-result-extract-fixed">
+    <div class="form-row">
+        <label>Lines to show</label>
+        <div style="display:flex; justify-content:space-between">
+            <input type="text" @bind="selectedFindStrResult.LinesNumberToExtract" style="background-color:black; color:limegreen; font-size:20px; font-weight:bolder" />
+        </div>
+    </div>
+    <table>
+        <tbody>
+            @foreach (var line in selectedFindStrResult.FileExtract)
+            {
+                <tr>
+                    <td class="file-extract" style="color:@(line.ToUpper().Contains(selectedFindStrResult.TextToSearch.ToUpper()) ? "lightPink":"aquamarine")">
+                        <pre>@line</pre>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+
+    [Parameter]
+    public FindStrSingleResult selectedFindStrResult { get; set; }
+
+}
+<style>
+    .selected-result-extract-fixed {
+        position: fixed;
+        bottom: 0;
+        right:0;
+        height:90vh;
+        width: 110vh;
+        overflow:auto;
+        padding-right:50px;
+    }
+
+    .file-extract {
+        background-color: black;
+        font-family: Consolas, "Lucida Console", monospace;
+        font-size: 24px;
+        font-weight: bold;
+    }
+</style>

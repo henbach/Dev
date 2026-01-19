@@ -27,7 +27,7 @@
                 <td>
                     <div class="form-row">
                         <label>Lines to show</label>
-                        <input type="text" @bind="item.LinesNumberToExtract" />
+                        <input type="text" @bind="item.LinesNumberToExtract" @bind:after="()=>{StateHasChanged();}"/>
                     </div>
                     <table>
                         <tbody>

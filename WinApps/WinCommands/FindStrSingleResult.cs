@@ -2,15 +2,16 @@
 {
     public class FindStrSingleResult
     {
-        private string OriginalLine;
+        public string OriginalLine { get; set; }
 
         public int LinesNumberToExtract { get; set; } = 1;
 
         public string TextToSearch { get; set; }
 
-        public FindStrSingleResult(string originalLine)
+        public FindStrSingleResult(string originalLine, int linesToShow)
         {
             OriginalLine = originalLine;
+            LinesNumberToExtract = linesToShow; 
         }
 
         public string FilePath
@@ -54,12 +55,12 @@
             }
         }
 
-        public static List<FindStrSingleResult> GetFindStrResults(WinCommandOutput wcouts, string textToSearch)
+        public static List<FindStrSingleResult> GetFindStrResults(WinCommandOutput wcouts, string textToSearch, int linesToShow = 1)
         {
             List<FindStrSingleResult> findStrs = new List<FindStrSingleResult>();
             foreach(var item in wcouts.Output.Split("\r\n"))
             {
-                var sr = new FindStrSingleResult(item);
+                var sr = new FindStrSingleResult(item, linesToShow);
                 sr.TextToSearch = textToSearch;
                 findStrs.Add(sr);
             }
